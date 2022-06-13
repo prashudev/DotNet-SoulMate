@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoulMate.API.data;
+using SoulMate.API.Repository;
 
 namespace SoulMate.API.Controllers
 {
@@ -14,19 +15,20 @@ namespace SoulMate.API.Controllers
     [ApiController]
     public class SoulmatesController : ControllerBase
     {
-        private readonly SoulmateDbContext _context;
         private readonly IMapper _mapper;
+        private readonly ISoulmateRepository _repository;
 
-        public SoulmatesController(SoulmateDbContext context)
+        public SoulmatesController(ISoulmateRepository repository, IMapper _mapper)
         {
-            _context = context;
+            this._mapper = _mapper;
+            this._repository=repository;
         }
 
         // GET: api/Soulmates
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OutgoingSoulmateDTO>>> GetSoulmate()
         {
-            var soulmate = await _context.Soulmate.ToListAsync();
+            var soulmate = await _repository.GetAllAsync();
             Console.WriteLine(soulmate);
             var soulmateDTO = _mapper.Map<List<OutgoingSoulmateDTO>>(soulmate);
             return Ok(soulmateDTO);
@@ -36,7 +38,7 @@ namespace SoulMate.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Soulmate>> GetSoulmate(int id)
         {
-            var soulmate = await _context.Soulmate.FindAsync(id);
+            var soulmate = await _repository.GetById(id);
 
             if (soulmate == null)
             {
@@ -56,15 +58,17 @@ namespace SoulMate.API.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(soulmate).State = EntityState.Modified;
-
+            var existingSoulmate=await _repository.GetById(id);
+            if (existingSoulmate == null) {
+                return NotFound("Soulmate doesn't exist");
+            }
             try
             {
-                await _context.SaveChangesAsync();
+                await _repository.UpdateAsync(existingSoulmate);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SoulmateExists(id))
+                if (!await SoulmateExists(id))
                 {
                     return NotFound();
                 }
@@ -83,8 +87,7 @@ namespace SoulMate.API.Controllers
         public async Task<ActionResult<Soulmate>> PostSoulmate(IncomingSoulmateDTO soulmateDTO)
         {
             var soulmate = _mapper.Map<Soulmate>(soulmateDTO);
-            _context.Soulmate.Add(soulmate);
-            await _context.SaveChangesAsync();
+            await _repository.AddAsync(soulmate);
 
             return CreatedAtAction("GetSoulmate", new { id = soulmate.Id }, soulmate);
         }
@@ -93,21 +96,20 @@ namespace SoulMate.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSoulmate(int id)
         {
-            var soulmate = await _context.Soulmate.FindAsync(id);
+            var soulmate = await _repository.GetAsync(id);
             if (soulmate == null)
             {
                 return NotFound();
             }
 
-            _context.Soulmate.Remove(soulmate);
-            await _context.SaveChangesAsync();
+            await _repository.DeleteAsync(id); 
 
             return NoContent();
         }
 
-        private bool SoulmateExists(int id)
+        private async Task<bool> SoulmateExists(int id)
         {
-            return _context.Soulmate.Any(e => e.Id == id);
+            return await _repository.Exists(id);
         }
     }
 }

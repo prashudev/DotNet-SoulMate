@@ -37,3 +37,9 @@ Create DTO and use Auto Mapper
 	Register MapperConfig to builder service (Program.cs)
 	Inject Mapper in controller constructor
 	Use Mapper for DTO<->Entity conversions
+
+Issue #6 Implement Repository Pattern
+	Create Generic Repository Interface and Implementation to use DbContext for CRUD
+	Create entiy specific Repository Interface and implementation specific to entity
+	Register as service (Program.cs)
+	Update controller to use DI repository

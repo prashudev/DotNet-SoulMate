@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using SoulMate.API.config;
 using SoulMate.API.data;
+using SoulMate.API.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,11 @@ builder.Services.AddDbContext<SoulmateDbContext>(options =>
 });
 
 builder.Services.AddAutoMapper(typeof(MapperConfig));
+
+/*The AddScoped method registers the service with a scoped lifetime, the lifetime of a single request.*/
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+//builder.Services.AddScoped(typeof(ICountryRepository), typeof(CountryRepository));
+builder.Services.AddScoped<ISoulmateRepository, SoulmateRepository>();
 
 var app = builder.Build();
 
