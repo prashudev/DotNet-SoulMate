@@ -17,19 +17,21 @@ namespace SoulMate.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ISoulmateRepository _repository;
+        private readonly ILogger<SoulmatesController> _logger;
 
-        public SoulmatesController(ISoulmateRepository repository, IMapper _mapper)
+        public SoulmatesController(ISoulmateRepository repository, IMapper _mapper, ILogger<SoulmatesController> logger)
         {
             this._mapper = _mapper;
-            this._repository=repository;
+            this._repository = repository;
+            _logger = logger;
         }
 
         // GET: api/Soulmates
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OutgoingSoulmateDTO>>> GetSoulmate()
         {
+            _logger.LogInformation("Get all Soulmate called");
             var soulmate = await _repository.GetAllAsync();
-            Console.WriteLine(soulmate);
             var soulmateDTO = _mapper.Map<List<OutgoingSoulmateDTO>>(soulmate);
             return Ok(soulmateDTO);
         }

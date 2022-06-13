@@ -14,10 +14,13 @@ namespace SoulMate.API.Controllers
     public class CountriesController : ControllerBase
     {
         private readonly SoulmateDbContext _context;
+        private readonly ILogger<CountriesController> _logger;
 
-        public CountriesController(SoulmateDbContext context)
+
+        public CountriesController(SoulmateDbContext context, ILogger<CountriesController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/Countries
@@ -31,6 +34,7 @@ namespace SoulMate.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Country>> GetCountry(int id)
         {
+            _logger.LogInformation("Get contries by id");
             var country = await _context.Countries.FindAsync(id);
 
             if (country == null)

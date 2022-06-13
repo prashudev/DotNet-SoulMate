@@ -43,3 +43,6 @@ Issue #6 Implement Repository Pattern
 	Create entiy specific Repository Interface and implementation specific to entity
 	Register as service (Program.cs)
 	Update controller to use DI repository
+
+Issue #7 Implementing logger in soulmate and contry controller
+	Use logger in controller class
