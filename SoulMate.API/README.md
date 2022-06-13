@@ -10,3 +10,17 @@ Logging with Serilog and SeQ
 	Add Serilog to builder (Program.cs)
 	Add logging configuration at (appsettings.json)
 	Provide port on which Seq to run (Make sure port number is same as that provided in appsettings.json)
+
+Issue #3 Set up SQL Server and Entity Framework
+Setup SQL Server
+    Nuget dependencies: Microsoft.EntityFrameworkCore.SqlServer
+	                    Microsoft.EntityFrameworkCore.Tools
+	Set connectionstring (appsettings.json)
+	Add DbContext to builder Services (Program.cs)
+Create DBContext and Entities
+	Create DbContext
+	Create entities
+Perform migration to migrate seed data into database 
+Run below commands in tools>Nuget Package Manager>Package Managaer Console
+		add-migration <InitialMigration>
+		update-database

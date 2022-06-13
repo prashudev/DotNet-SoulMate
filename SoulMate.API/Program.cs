@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Serilog;
+using SoulMate.API.data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +18,12 @@ builder.Services.AddCors(options => {
 
 });
 builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console().ReadFrom.Configuration(ctx.Configuration));
-
+var connectionString = builder.Configuration.GetConnectionString("SoulmateDbConnectionString");
+// Add services to the container.
+builder.Services.AddDbContext<SoulmateDbContext>(options =>
+{
+    options.UseSqlServer(connectionString);
+});
 
 var app = builder.Build();
 
