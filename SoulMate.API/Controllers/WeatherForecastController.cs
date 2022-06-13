@@ -21,6 +21,7 @@ namespace SoulMate.API.Controllers
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
+            _logger.LogInformation("Weather Forecast get mapping called:");
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
@@ -33,6 +34,7 @@ namespace SoulMate.API.Controllers
         [HttpGet("/greet")]
         public String GetMessage()
         {
+            _logger.LogInformation("Greet message method called..");
             return "Hai Good Morning, Welcome to DotNet";
         }
     }
