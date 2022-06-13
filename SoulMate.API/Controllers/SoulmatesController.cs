@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ namespace SoulMate.API.Controllers
     public class SoulmatesController : ControllerBase
     {
         private readonly SoulmateDbContext _context;
+        private readonly IMapper _mapper;
 
         public SoulmatesController(SoulmateDbContext context)
         {
@@ -22,9 +24,12 @@ namespace SoulMate.API.Controllers
 
         // GET: api/Soulmates
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Soulmate>>> GetSoulmate()
+        public async Task<ActionResult<IEnumerable<OutgoingSoulmateDTO>>> GetSoulmate()
         {
-            return await _context.Soulmate.ToListAsync();
+            var soulmate = await _context.Soulmate.ToListAsync();
+            Console.WriteLine(soulmate);
+            var soulmateDTO = _mapper.Map<List<OutgoingSoulmateDTO>>(soulmate);
+            return Ok(soulmateDTO);
         }
 
         // GET: api/Soulmates/5
@@ -75,8 +80,9 @@ namespace SoulMate.API.Controllers
         // POST: api/Soulmates
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Soulmate>> PostSoulmate(Soulmate soulmate)
+        public async Task<ActionResult<Soulmate>> PostSoulmate(IncomingSoulmateDTO soulmateDTO)
         {
+            var soulmate = _mapper.Map<Soulmate>(soulmateDTO);
             _context.Soulmate.Add(soulmate);
             await _context.SaveChangesAsync();
 

@@ -22,9 +22,18 @@ Create DBContext and Entities
 	Create entities
 Perform migration to migrate seed data into database 
 Run below commands in tools>Nuget Package Manager>Package Managaer Console
-		add-migration <InitialMigration>
-		update-database
+	add-migration <InitialMigration>
+	update-database
 
 Issue #4 Create Scaffold Controllers and Actions	
 	Perform scaffolding to create controller and action
 	Test through Swagger
+
+Issue #5 Create Automapper and DTO
+Create DTO and use Auto Mapper
+	Nuget: AutoMapper.Extensions.Microsoft.DependencyInjection
+	Create Incomming and Outgoing DTOs
+	Create MapperConfig
+	Register MapperConfig to builder service (Program.cs)
+	Inject Mapper in controller constructor
+	Use Mapper for DTO<->Entity conversions
